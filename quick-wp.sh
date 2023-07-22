@@ -23,8 +23,12 @@
 QWP_DIR="$HOME/.quick-wp"
 VERSION_REQUESTED='6.2.2'
 INSTALL_DIR='.' # for now - will be a param
-WP_CLI="$HOME/wp-cli/wp"
 SCRIPT_DIR=$(dirname "$0")
+
+wp()
+{
+    "${HOME}/wp-cli/wp" "${@}"
+}
 
 # make directory
 # (for now run IN a directory)
@@ -43,7 +47,7 @@ ln -s $QWP_DIR/$VERSION_REQUESTED/wp-admin $QWP_DIR/$VERSION_REQUESTED/wp-includ
 
 # copy config (have to copy this from source, not the symlink)
 # or wp config create
-$WP_CLI config create --dbname=localhost --dbuser=unused --skip-check --insecure
+wp config create --dbname=localhost --dbuser=unused --skip-check --insecure
 
 # make wp-content
 mkdir $INSTALL_DIR/wp-content
@@ -67,7 +71,7 @@ sed -i '' 's#{SQLITE_PLUGIN}#sqlite-database-integration/load.php#' ${INSTALL_DI
 mkdir $INSTALL_DIR/wp-content/database && touch $INSTALL_DIR/wp-content/database/.ht.sqlite
 
 # Could add --locale
-$WP_CLI core install --url=http://localhost:8001 --title="A New Hope" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+wp core install --url=http://localhost:8001 --title="A New Hope" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
 
 # copy the router.php in
 cp $SCRIPT_DIR/router.php $INSTALL_DIR
