@@ -26,6 +26,24 @@ INSTALL_DIR='.' # for now - will be a param
 WP_CLI="$HOME/wp-cli/wp"
 SCRIPT_DIR=$(dirname "$0")
 
+# Start downloads
+
+# Check for QWP_DIR and create if it doesn't exist
+if [ ! -d "$QWP_DIR" ]; then
+  mkdir $QWP_DIR
+fi
+
+# Check for sqlite-database-integration plugin and download if it doesn't exist
+if [ ! -d "$QWP_DIR/sqlite-database-integration" ]; then
+  curl https://downloads.wordpress.org/plugin/sqlite-database-integration.zip --silent --output $QWP_DIR/sqlite-database-integration.zip
+  unzip $QWP_DIR/sqlite-database-integration.zip -d $QWP_DIR
+fi
+
+# Check for version of WP requested and download if it doesn't exist
+if [ ! -d "$QWP_DIR/$VERSION_REQUESTED" ]; then
+  $WP_CLI core download --path=$QWP_DIR/$VERSION_REQUESTED --version=$VERSION_REQUESTED
+fi
+
 # make directory
 # (for now run IN a directory)
 
