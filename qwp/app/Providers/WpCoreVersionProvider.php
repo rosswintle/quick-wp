@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Services\SiteIndex;
+use App\Services\WpCoreVersion;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 
-class SiteIndexProvider extends ServiceProvider
+class WpCoreVersionProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
@@ -25,10 +25,10 @@ class SiteIndexProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(
-            SiteIndex::class,
+        $this->app->bind(
+            WpCoreVersion::class,
             function (Application $app) {
-                return new SiteIndex();
+                return new WpCoreVersion();
             }
         );
     }

@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Services\SiteIndex;
+use App\Services\WpCoreVersion;
 use LaravelZero\Framework\Commands\Command;
 
 class Add extends Command
@@ -30,5 +31,7 @@ class Add extends Command
     {
         $this->info("Adding site: " . $this->argument('name'));
         $index->add($this->argument('name'));
+
+        app(WpCoreVersion::class)->getPath('6.2.2');
     }
 }
