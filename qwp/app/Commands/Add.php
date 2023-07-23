@@ -13,7 +13,7 @@ class Add extends Command
      *
      * @var string
      */
-    protected $signature = 'add {name}';
+    protected $signature = 'add {name} {--wp-version=latest}';
 
     /**
      * The description of the command.
@@ -23,15 +23,26 @@ class Add extends Command
     protected $description = 'Creates a site';
 
     /**
+     * The version to install/use.
+     */
+    protected string $version;
+
+    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle(SiteIndex $index)
     {
+        if ($this->option('wp-version') === 'latest') {
+            $this->version = app(WpCoreVersion::class)->getLatestVersion();
+        } else {
+            $this->version = $this->option('wp-version');
+        }
+
         $this->info("Adding site: " . $this->argument('name'));
         $index->add($this->argument('name'));
 
-        app(WpCoreVersion::class)->getPath('6.2.2');
+        app(WpCoreVersion::class)->getPath($this->option('wp-version'));
     }
 }

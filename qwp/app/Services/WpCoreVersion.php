@@ -69,4 +69,16 @@ class WpCoreVersion
         // TODO: Make the wordpress directory if needed
         return Storage::path(self::DIRECTORY . "/$version");
     }
+
+    /**
+     * Get the latest version number from the WordPress core API
+     */
+    public function getLatestVersion() : string
+    {
+        $this->info("Fetching latest WordPress Core Version");
+        $response = Http::get('https://api.wordpress.org/core/version-check/1.7/');
+        $latestVersion = $response->json()['offers'][0]['version'];
+        $this->info("Latest version is: $latestVersion");
+        return $latestVersion;
+    }
 }
