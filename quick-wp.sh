@@ -80,7 +80,7 @@ cp -r $QWP_DIR/sqlite-database-integration/db.copy $INSTALL_DIR/wp-content/db.ph
 cp -r $QWP_DIR/$VERSION_REQUESTED/wp-content/themes/* $INSTALL_DIR/wp-content/themes/
 
 # from https://github.com/WordPress/sqlite-database-integration/issues/7#issuecomment-1563465590
-sed -i '' 's#{SQLITE_IMPLEMENTATION_FOLDER_PATH}#${INSTALL_DIR}/wp-content/plugins/sqlite-database-integration#' ${INSTALL_DIR}/wp-content/db.php \
+sed -i '' 's#{SQLITE_IMPLEMENTATION_FOLDER_PATH}#${INSTALL_DIR}/wp-content/plugins/sqlite-database-integration#' ${INSTALL_DIR}/wp-content/db.php
 sed -i '' 's#{SQLITE_PLUGIN}#sqlite-database-integration/load.php#' ${INSTALL_DIR}/wp-content/db.php
 mkdir $INSTALL_DIR/wp-content/database && touch $INSTALL_DIR/wp-content/database/.ht.sqlite
 
