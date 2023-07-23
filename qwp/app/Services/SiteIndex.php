@@ -33,7 +33,7 @@ class SiteIndex
     protected function fromArray(array $sitesArray) : Collection
     {
         return $this->sites = collect($sitesArray)->map(function ($site) {
-            return new Site($site->name, $site->path);
+            return new Site($site->name, $site->path, $site->version);
         });
     }
 
@@ -69,14 +69,14 @@ class SiteIndex
     /**
      * Adds a site to the index
      */
-    public function add(string $name) : void
+    public function add(string $name, string $path, string $version) : void
     {
         if ($this->exists($name)) {
             $this->warn("Site already exists");
             return;
         }
 
-        $this->sites[] = new Site($name, 'some/path/' . $name);
+        $this->sites[] = new Site($name, $path, $version);
 
         Storage::put('sites.json', json_encode($this->sites));
     }

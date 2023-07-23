@@ -8,10 +8,13 @@ class Site
 
     public string $path;
 
-    public function __construct(string $name, string $path)
+    public string $version;
+
+    public function __construct(string $name, string $path, string $version)
     {
         $this->name = $name;
         $this->path = $path;
+        $this->version = $version;
     }
 
     public function toArray() : array
@@ -19,6 +22,7 @@ class Site
         return [
             'name' => $this->name,
             'path' => $this->path,
+            'version' => $this->version,
         ];
     }
 }
