@@ -49,7 +49,7 @@ class WpCli
     public function install() : void
     {
         $this->info('Installing WP-CLI');
-        Http::withOptions(['sink' => storage_path('app/wp-cli.phar')])
+        Http::withOptions(['sink' => Storage::path('wp-cli.phar')])
             ->get('https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar');
     }
 
@@ -59,7 +59,7 @@ class WpCli
     public function run(string $command) : void
     {
         $this->info("Running WP-CLI command: {$command}");
-        exec('php ' . storage_path('app/wp-cli.phar') .  " " . $command, $output, $resultCode);
+        exec('php ' . Storage::path('wp-cli.phar') .  " " . $command, $output, $resultCode);
         echo implode("\n", $output);
     }
 }

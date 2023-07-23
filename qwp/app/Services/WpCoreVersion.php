@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class WpCoreVersion
 {
+    const DIRECTORY = 'wordpress';
+
     // Required for console output
     use InteractsWithIO;
 
@@ -19,6 +21,14 @@ class WpCoreVersion
     public function __construct()
     {
         $this->output = new ConsoleOutput();
+    }
+
+    /**
+     * Initialize the service.
+     */
+    public function init()
+    {
+        Storage::makeDirectory('wordpress');
     }
 
     /**
@@ -39,7 +49,7 @@ class WpCoreVersion
      */
     protected function isStored(string $version) : bool
     {
-        return Storage::exists($this->pathTo($version));
+        return Storage::exists(self::DIRECTORY . "/$version");
     }
 
     /**
@@ -52,11 +62,11 @@ class WpCoreVersion
     }
 
     /**
-     * Get the path to a WordPress Core Version.
+     * Get the path for a WordPress Core Version.
      */
     protected function pathTo(string $version) : string
     {
         // TODO: Make the wordpress directory if needed
-        return storage_path('app/wordpress/' . $version);
+        return Storage::path(self::DIRECTORY . "/$version");
     }
 }

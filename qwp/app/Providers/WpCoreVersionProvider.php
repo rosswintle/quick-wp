@@ -15,7 +15,7 @@ class WpCoreVersionProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        app(WpCoreVersion::class)->init();
     }
 
     /**
