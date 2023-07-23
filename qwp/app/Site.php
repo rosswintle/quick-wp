@@ -13,4 +13,12 @@ class Site
         $this->name = $name;
         $this->path = $path;
     }
+
+    public function toArray() : array
+    {
+        return [
+            'name' => $this->name,
+            'path' => $this->path,
+        ];
+    }
 }

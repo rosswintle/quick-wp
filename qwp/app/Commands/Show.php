@@ -29,6 +29,6 @@ class Show extends Command
     public function handle(SiteIndex $index)
     {
         $this->info("List of sites");
-        dump($index->all());
+        $this->table(['Name', 'Path'], $index->allAsArray());
     }
 }

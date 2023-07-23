@@ -45,6 +45,11 @@ class SiteIndex
         return $this->sites;
     }
 
+    public function allAsArray() : array
+    {
+        return $this->sites->map(fn ($site) => $site->toArray())->toArray();
+    }
+
     /**
      * Returns a site by name.
      */
