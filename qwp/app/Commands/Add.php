@@ -5,21 +5,21 @@ namespace App\Commands;
 use App\Services\SiteIndex;
 use LaravelZero\Framework\Commands\Command;
 
-class Show extends Command
+class Add extends Command
 {
     /**
      * The signature of the command.
      *
      * @var string
      */
-    protected $signature = 'show';
+    protected $signature = 'add {name}';
 
     /**
      * The description of the command.
      *
      * @var string
      */
-    protected $description = 'Shows a list of all of your sites';
+    protected $description = 'Creates a site';
 
     /**
      * Execute the console command.
@@ -28,7 +28,7 @@ class Show extends Command
      */
     public function handle(SiteIndex $index)
     {
-        $this->info("List of sites");
-        dump($index->all());
+        $this->info("Adding site: " . $this->argument('name'));
+        $index->add($this->argument('name'));
     }
 }
