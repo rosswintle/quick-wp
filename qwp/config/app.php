@@ -68,6 +68,8 @@ return [
 
     'providers' => [
         App\Providers\SiteIndexProvider::class,
+        App\Providers\WpCoreVersionProvider::class,
+        App\Providers\WpCliProvider::class,
     ],
 
 ];
