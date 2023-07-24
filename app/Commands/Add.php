@@ -196,7 +196,7 @@ class Add extends Command
 
         $index->add($this->argument('name'), $this->installPath, $this->version);
 
-        $this->info("Starting site on http://localhost:8001");
+        $this->info("Starting site on http://localhost:8001 - press Ctrl+C to stop - wp-admin login is admin/admin");
 
         // Note that this is not Laravel 10 yet so we don't have the Process Facade and are using the Symfony Process component directly
         Process::fromShellCommandline("php -S localhost:8001 $this->installPath/router.php", $this->installPath, timeout: null)->run();
