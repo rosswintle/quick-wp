@@ -1,2 +1,6 @@
-/tests
-/qwp/storage
+/vendor
+/.idea
+/.vscode
+/.vagrant
+.phpunit.result.cache
+./storage
