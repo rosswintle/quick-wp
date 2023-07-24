@@ -197,6 +197,8 @@ class Add extends Command
         $index->add($this->argument('name'), $this->installPath, $this->version);
 
         $this->info("Starting site on http://localhost:8001");
+
+        // Note that this is not Laravel 10 yet so we don't have the Process Facade and are using the Symfony Process component directly
         Process::fromShellCommandline("php -S localhost:8001 $this->installPath/router.php", $this->installPath, timeout: null)->run();
     }
 }
