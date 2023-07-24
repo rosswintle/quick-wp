@@ -104,7 +104,7 @@ class Add extends Command
 
         // CHECK NAME AND PATH DON'T ALREADY EXIST
         // Check for an existing directory
-        if (file_exists($this->installPath)) {
+        if (File::isDirectory($this->installPath)) {
             $this->error("Directory already exists: " . $this->installPath);
             return;
         }
@@ -127,16 +127,14 @@ class Add extends Command
         $this->createWpConfigFile();
 
         // make wp-content directory
-        mkdir($this->installPath . '/wp-content');
+        File::ensureDirectoryExists($this->installPath . '/wp-content');
         // make wp-content/plugins
-        mkdir($this->installPath . '/wp-content/plugins');
+        File::ensureDirectoryExists($this->installPath . '/wp-content/plugins');
         // make wp-content/themes
-        mkdir($this->installPath . '/wp-content/themes');
+        File::ensureDirectoryExists($this->installPath . '/wp-content/themes');
 
         // Check SQLite plugin exists and get it if required
-        if (!Storage::directoryExists(Storage::path('plugins'))) {
-            Storage::createDirectory(Storage::path('plugins'));
-        }
+        File::ensureDirectoryExists(Storage::path('plugins'));
 
         if (Storage::exists(Storage::path('plugins/sqlite-database-integration.zip'))) {
             $this->info("Using existing SQLite plugin");
