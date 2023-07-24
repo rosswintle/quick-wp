@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Services\WpCoreVersion;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
 
@@ -176,8 +177,8 @@ class Add extends Command
         // copy in a theme?
         // TODO: Make this a method of the CoreVersion service
         $themeDirs = Storage::directories('wordpress/' . $this->version . '/wp-content/themes');
+        $this->info('Copying default themes');
         foreach ($themeDirs as $dir) {
-            echo "Copying theme: $dir\n";
             File::copyDirectory(
                 Storage::path($dir),
                 $this->installPath . '/wp-content/themes/' . Str::afterLast($dir, '/')
@@ -185,7 +186,7 @@ class Add extends Command
         }
 
         // Could add --locale
-        app(WpCli::class)->run('core install --url=http://localhost:8001 --title="A New Hope" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
+        app(WpCli::class)->run('core install --url=http://localhost:8001 --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
 
         // copy the router.php in
         File::copy(
@@ -193,9 +194,9 @@ class Add extends Command
             $this->installPath . '/router.php'
         );
 
-        // php -S localhost:<port> <path>/router.php
-        // php -S localhost:8001 $INSTALL_DIR/router.php
-
         $index->add($this->argument('name'), $this->installPath, $this->version);
+
+        $this->info("Starting site on http://localhost:8001");
+        Process::fromShellCommandline("php -S localhost:8001 $this->installPath/router.php", $this->installPath, timeout: null)->run();
     }
 }
