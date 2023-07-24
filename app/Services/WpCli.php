@@ -61,5 +61,6 @@ class WpCli
         $this->info("Running WP-CLI command: {$command}");
         exec('php ' . Storage::path('wp-cli.phar') .  " " . $command, $output, $resultCode);
         echo implode("\n", $output);
+        echo "\n";
     }
 }
