@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\File;
+
 class Site
 {
     public string $name;
@@ -24,5 +26,10 @@ class Site
             'path' => $this->path,
             'version' => $this->version,
         ];
+    }
+
+    public function pathExists() : bool
+    {
+        return File::exists($this->path);
     }
 }
