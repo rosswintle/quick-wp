@@ -19,7 +19,7 @@ class Add extends Command
      *
      * @var string
      */
-    protected $signature = 'add {name} {--wp-version=latest} {--path=}';
+    protected $signature = 'add {name} {--wp-version=latest : Version can be a verison number, "latest" or "nightly"} {--path=}';
 
     /**
      * The description of the command.
@@ -44,11 +44,7 @@ class Add extends Command
      */
     public function getVersionOption() : string
     {
-        if ($this->option('wp-version') === 'latest') {
-            return app(WpCoreVersion::class)->getLatestVersion();
-        } else {
-            return $this->option('wp-version');
-        }
+        return $this->option('wp-version');
     }
 
     /**
