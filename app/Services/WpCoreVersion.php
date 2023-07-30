@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Services\WpCli;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Console\Concerns\InteractsWithIO;
@@ -16,12 +18,15 @@ class WpCoreVersion
     // Required for console output
     use InteractsWithIO;
 
+    protected string coreCachePath = '';
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->output = new ConsoleOutput();
+        $this->coreCachePath = Str::of(config('quickwp.userDirectory'))->finish('/') .  self::DIRECTORY;
     }
 
     /**
@@ -29,7 +34,7 @@ class WpCoreVersion
      */
     public function init()
     {
-        Storage::makeDirectory('wordpress');
+        File::ensureDirectoryExists($this->coreCachePath);
     }
 
     /**
@@ -54,7 +59,7 @@ class WpCoreVersion
         if ($version === 'nightly') {
             return false;
         }
-        return Storage::exists(self::DIRECTORY . "/$version");
+        return File::exists($this->pathTo($version));
     }
 
     /**
@@ -73,6 +78,6 @@ class WpCoreVersion
     protected function pathTo(string $version) : string
     {
         // TODO: Make the wordpress directory if needed
-        return Storage::path(self::DIRECTORY . "/$version");
+        return $this->coreCachePath . "/$version";
     }
 }

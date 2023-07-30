@@ -12,7 +12,7 @@ class Settings
     // Required for console output
     use InteractsWithIO;
 
-    const FILENAME = '.quick-wp/sites.json';
+    const FILENAME = 'sites.json';
 
     protected Valuestore $store;
 
@@ -21,9 +21,7 @@ class Settings
      */
     public function __construct()
     {
-        // Build file path from HOME env var
-        $home = env('HOME') ?? env('USERPROFILE');
-        $filename = $home . DIRECTORY_SEPARATOR . self::FILENAME;
+        $filename = config('quickwp.userDirectory') . DIRECTORY_SEPARATOR . self::FILENAME;
         $this->store = Valuestore::make($filename);
     }
 
