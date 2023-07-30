@@ -7,6 +7,7 @@ use App\Services\Settings;
 use App\Services\SiteIndex;
 use Illuminate\Support\Str;
 use App\Services\WpCoreVersion;
+use App\Traits\GetsInstallPath;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\Process\Process;
@@ -17,6 +18,7 @@ use Illuminate\Validation\Concerns\ValidatesAttributes;
 class Add extends Command
 {
     use ValidatesAttributes;
+    use GetsInstallPath;
 
     /**
      * The signature of the command.
@@ -67,28 +69,6 @@ class Add extends Command
     public function getVersionOption() : string
     {
         return $this->option('wp-version');
-    }
-
-    /**
-     * Get the install path option - defaults to a subdirectory of the current directory.
-     */
-    public function getInstallPathOption() : string
-    {
-        // Default is to use a subdirectory of the current directory
-        $installPath = getcwd() . '/' . $this->argument('name');
-
-        // Use default path setting is it is set
-        $settings = app(Settings::class);
-        if ($settings->has('default-path')) {
-            $installPath = $settings->get('default-path') . '/' . $this->argument('name');
-        }
-
-        // Use CLI-specified path if that is set
-        if ($this->option('path')) {
-            $installPath = $this->option('path');
-        }
-
-        return $installPath;
     }
 
     /**

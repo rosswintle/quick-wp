@@ -73,11 +73,26 @@ class SiteIndex
     public function add(string $name, string $path, string $version) : void
     {
         if ($this->exists($name)) {
-            $this->warn("Site already exists");
+            $this->warn("Site already exists in index");
             return;
         }
 
         $this->sites[] = new Site($name, $path, $version);
+
+        app(Settings::class)->set('sites', $this->sites);
+    }
+
+    /**
+     * Removes a site from the index
+     */
+    public function remove(string $name) : void
+    {
+        if (! $this->exists($name)) {
+            $this->warn("Site does not exist in index");
+            return;
+        }
+
+        $this->sites = $this->sites->reject(fn ($site) => $site->name === $name);
 
         app(Settings::class)->set('sites', $this->sites);
     }

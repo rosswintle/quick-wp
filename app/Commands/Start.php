@@ -13,7 +13,7 @@ class Start extends Command
      *
      * @var string
      */
-    protected $signature = 'start {name}';
+    protected $signature = 'start {name?}';
 
     /**
      * The description of the command.
@@ -29,13 +29,25 @@ class Start extends Command
      */
     public function handle(SiteIndex $index)
     {
+        // Provide a selectable list if the name is not provided
+        if (! $this->argument('name')) {
+            $sites = $index->all();
+            $name = $this->choice(
+                'Which site do you want to start?',
+                $sites->map(fn ($site) => $site->name)->toArray()
+            );
+            if ($name) {
+                $siteName = $name;
+            }
+        }
+
         // Check for an existing site in the index
-        if (! $index->exists($this->argument('name'))) {
-            $this->error("Site does not exist: " . $this->argument('name'));
+        if (! $index->exists($siteName)) {
+            $this->error("Site does not exist: " . $siteName);
             return;
         }
 
-        $site = $index->get($this->argument('name'));
+        $site = $index->get($siteName);
 
         // Check that the path exists
         if (! $site->pathExists()) {
