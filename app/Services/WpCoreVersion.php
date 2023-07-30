@@ -50,6 +50,7 @@ class WpCoreVersion
      */
     protected function isStored(string $version) : bool
     {
+        // TODO: Store nightly versions and check when update is needed.
         if ($version === 'nightly') {
             return false;
         }
@@ -62,7 +63,8 @@ class WpCoreVersion
     protected function fetchAndStore(string $version) : void
     {
         $this->info("Fetching WordPress Core Version {$version}");
-        app(WpCli::class)->run("core download --version={$version} --path={$this->pathTo($version)}");
+        // --force is needed to make sure we have nightlies
+        app(WpCli::class)->run("core download --version={$version} --path={$this->pathTo($version)} --force");
     }
 
     /**
