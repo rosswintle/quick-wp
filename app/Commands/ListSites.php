@@ -5,14 +5,14 @@ namespace App\Commands;
 use App\Services\SiteIndex;
 use LaravelZero\Framework\Commands\Command;
 
-class Show extends Command
+class ListSites extends Command
 {
     /**
      * The signature of the command.
      *
      * @var string
      */
-    protected $signature = 'show';
+    protected $signature = 'list';
 
     /**
      * The description of the command.
