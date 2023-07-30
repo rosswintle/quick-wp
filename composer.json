@@ -19,6 +19,7 @@
         "php": "^8.0",
         "guzzlehttp/guzzle": "^7.4",
         "illuminate/http": "^9.0",
+        "illuminate/validation": "^9.52",
         "laravel-zero/framework": "^9.2",
         "nunomaduro/termwind": "^1.14",
         "spatie/valuestore": "^1.3"

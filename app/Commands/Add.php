@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Services\WpCli;
+use App\Services\Settings;
 use App\Services\SiteIndex;
 use Illuminate\Support\Str;
 use App\Services\WpCoreVersion;
@@ -11,15 +12,20 @@ use Illuminate\Support\Facades\Http;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
+use Illuminate\Validation\Concerns\ValidatesAttributes;
 
 class Add extends Command
 {
+    use ValidatesAttributes;
+
     /**
      * The signature of the command.
      *
      * @var string
      */
-    protected $signature = 'add {name} {--wp-version=latest : Version can be a verison number, "latest" or "nightly"} {--path=}';
+    protected $signature = 'add {name}
+    {--wp-version=latest : Version can be a verison number, "latest" or "nightly"}
+    {--path= : A path to install to. Defaults to a subdirectory of the current directory or the configured default path. }';
 
     /**
      * The description of the command.
@@ -40,6 +46,22 @@ class Add extends Command
     protected string $installPath;
 
     /**
+     * Validates arguments (the mandatory/positional options) *before* processing them
+     */
+    public function validateArguments(): void
+    {
+        if (! $this->validateAlphaDash('name', $this->argument('name'), true)) {
+            $this->error('Site name can only contain letters, numbers and dashes');
+            die();
+        }
+    }
+
+    public function validateOptions() : void
+    {
+        // TODO: Validate options
+    }
+
+    /**
      * Get the version option - interprets 'latest' as the latest version.
      */
     public function getVersionOption() : string
@@ -52,7 +74,21 @@ class Add extends Command
      */
     public function getInstallPathOption() : string
     {
-        return $this->option('path') ?? ( getcwd() . '/' . $this->argument('name') );
+        // Default is to use a subdirectory of the current directory
+        $installPath = getcwd() . '/' . $this->argument('name');
+
+        // Use default path setting is it is set
+        $settings = app(Settings::class);
+        if ($settings->has('default-path')) {
+            $installPath = $settings->get('default-path') . '/' . $this->argument('name');
+        }
+
+        // Use CLI-specified path if that is set
+        if ($this->option('path')) {
+            $installPath = $this->option('path');
+        }
+
+        return $installPath;
     }
 
     /**
@@ -95,9 +131,13 @@ class Add extends Command
      */
     public function handle(SiteIndex $index)
     {
+        $this->validateArguments();
+
         $this->version = $this->getVersionOption();
 
         $this->installPath = $this->getInstallPathOption();
+
+        $this->info('Installing to ' . $this->installPath);
 
         // CHECK NAME AND PATH DON'T ALREADY EXIST
         // Check for an existing directory
@@ -115,7 +155,7 @@ class Add extends Command
         $this->info("Adding site: " . $this->argument('name'));
 
         // Make the directory
-        mkdir($this->installPath);
+        File::ensureDirectoryExists($this->installPath);
 
         // Link the core files to the sites directory
         $this->linkCoreFiles();
