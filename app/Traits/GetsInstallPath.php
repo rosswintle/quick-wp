@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Services\Settings;
+use Illuminate\Support\Str;
 
 trait GetsInstallPath
 {
@@ -17,7 +18,7 @@ trait GetsInstallPath
         // Use default path setting is it is set
         $settings = app(Settings::class);
         if ($settings->has('default-path')) {
-            $installPath = $settings->get('default-path') . '/' . $this->argument('name');
+            $installPath = Str::of($settings->get('default-path'))->finish('/') . $this->argument('name');
         }
 
         // Use CLI-specified path if that is set
