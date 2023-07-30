@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Console\Concerns\InteractsWithIO;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -38,7 +38,7 @@ class WpCli
      */
     public function isInstalled() : bool
     {
-        return Storage::exists('wp-cli.phar');
+        return File::exists(config('quickwp.userDirectory') . '/wp-cli.phar');
     }
 
     /**
@@ -49,7 +49,7 @@ class WpCli
     public function install() : void
     {
         $this->info('Installing WP-CLI');
-        Http::withOptions(['sink' => Storage::path('wp-cli.phar')])
+        Http::withOptions(['sink' => config('quickwp.userDirectory') . '/wp-cli.phar'])
             ->get('https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar');
     }
 
@@ -59,7 +59,7 @@ class WpCli
     public function run(string $command) : void
     {
         $this->info("Running WP-CLI command: {$command}");
-        exec('php ' . Storage::path('wp-cli.phar') .  " " . $command, $output, $resultCode);
+        exec('php ' . config('quickwp.userDirectory') . '/wp-cli.phar' .  " " . $command, $output, $resultCode);
         echo implode("\n", $output);
         echo "\n";
     }

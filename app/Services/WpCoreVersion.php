@@ -18,7 +18,7 @@ class WpCoreVersion
     // Required for console output
     use InteractsWithIO;
 
-    protected string coreCachePath = '';
+    protected string $coreCachePath = '';
 
     /**
      * Constructor

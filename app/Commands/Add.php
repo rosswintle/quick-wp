@@ -106,6 +106,11 @@ class Add extends Command
         app(WpCli::class)->run('config create --dbname=localhost --dbuser=unused --skip-check --insecure --path=' . $this->installPath);
     }
 
+    protected function getStoragePathForDirectory(string $directory) : string
+    {
+        return Str::of(config('quickwp.userDirectory'))->finish('/') . $directory;
+    }
+
     /**
      * Execute the console command.
      *
@@ -153,23 +158,24 @@ class Add extends Command
         File::ensureDirectoryExists($this->installPath . '/wp-content/themes');
 
         // Check SQLite plugin exists and get it if required
-        File::ensureDirectoryExists(Storage::path('/plugins'));
-        if (Storage::exists('/plugins/sqlite-database-integration.zip')) {
+        $pluginsPath = $this->getStoragePathForDirectory('plugins');
+        File::ensureDirectoryExists($pluginsPath);
+        if (File::exists($pluginsPath . '/sqlite-database-integration.zip')) {
             $this->info("Using existing SQLite plugin");
         } else {
             $this->info("Fetching SQLite plugin");
-            Http::withOptions(['sink' => Storage::path('plugins/sqlite-database-integration.zip')])
+            Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
                 ->get('https://downloads.wordpress.org/plugin/sqlite-database-integration.zip');
             // Unzip the plugin
             $this->info("Unzipping SQLite plugin");
             $zip = new \ZipArchive;
-            $zip->open(Storage::path('plugins/sqlite-database-integration.zip'));
-            $zip->extractTo(Storage::path('plugins'));
+            $zip->open($pluginsPath . '/sqlite-database-integration.zip');
+            $zip->extractTo($pluginsPath);
         }
 
-        File::copyDirectory(Storage::path('plugins/sqlite-database-integration'), $this->installPath . '/wp-content/plugins/sqlite-database-integration');
+        File::copyDirectory($pluginsPath . '/sqlite-database-integration', $this->installPath . '/wp-content/plugins/sqlite-database-integration');
 
-        File::copy(Storage::path('plugins/sqlite-database-integration/db.copy'), $this->installPath . '/wp-content/db.php');
+        File::copy($pluginsPath . '/sqlite-database-integration/db.copy', $this->installPath . '/wp-content/db.php');
 
         // from https://github.com/WordPress/sqlite-database-integration/issues/7#issuecomment-1563465590
         $dbPhp = file_get_contents($this->installPath . '/wp-content/db.php');
@@ -193,11 +199,11 @@ class Add extends Command
 
         // copy in a theme?
         // TODO: Make this a method of the CoreVersion service
-        $themeDirs = Storage::directories('wordpress/' . $this->version . '/wp-content/themes');
+        $themeDirs = File::directories($this->getStoragePathForDirectory('wordpress/' . $this->version . '/wp-content/themes'));
         $this->info('Copying default themes');
         foreach ($themeDirs as $dir) {
             File::copyDirectory(
-                Storage::path($dir),
+                $dir,
                 $this->installPath . '/wp-content/themes/' . Str::afterLast($dir, '/')
             );
         }
