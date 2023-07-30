@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Site;
+use App\Services\Settings;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Console\Concerns\InteractsWithIO;
@@ -20,20 +21,20 @@ class SiteIndex
      */
     public function __construct()
     {
-        if (!Storage::exists('sites.json')) {
-            Storage::put('sites.json', json_encode([]));
-        }
-
-        $this->sites = $this->fromArray(json_decode(Storage::get('sites.json'), associative: false));
-
         // Set up the console output
         $this->output = new ConsoleOutput();
+    }
+
+    public function init() : void
+    {
+        $settings = app(Settings::class);
+        $this->sites = $this->fromArray($settings->get('sites', []));
     }
 
     protected function fromArray(array $sitesArray) : Collection
     {
         return $this->sites = collect($sitesArray)->map(function ($site) {
-            return new Site($site->name, $site->path, $site->version);
+            return new Site($site['name'], $site['path'], $site['version']);
         });
     }
 
@@ -78,6 +79,6 @@ class SiteIndex
 
         $this->sites[] = new Site($name, $path, $version);
 
-        Storage::put('sites.json', json_encode($this->sites));
+        app(Settings::class)->set('sites', $this->sites);
     }
 }

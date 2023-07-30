@@ -21,7 +21,7 @@
         "illuminate/http": "^9.0",
         "laravel-zero/framework": "^9.2",
         "nunomaduro/termwind": "^1.14",
-        "ryangjchandler/orbit": "^1.2"
+        "spatie/valuestore": "^1.3"
     },
     "require-dev": {
         "laravel/pint": "^1.2",

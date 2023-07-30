@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Providers;
 
-use App\Services\SiteIndex;
+use App\Services\Settings;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 
-class SiteIndexProvider extends ServiceProvider
+class SettingsProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
@@ -14,7 +15,8 @@ class SiteIndexProvider extends ServiceProvider
      */
     public function boot()
     {
-        app(SiteIndex::class)->init();
+        // Initialise the settings object
+        app(Settings::class)->init();
     }
 
     /**
@@ -25,9 +27,9 @@ class SiteIndexProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(
-            SiteIndex::class,
+            Settings::class,
             function (Application $app) {
-                return new SiteIndex();
+                return new Settings();
             }
         );
     }
