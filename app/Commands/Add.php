@@ -131,9 +131,8 @@ class Add extends Command
         File::ensureDirectoryExists($this->installPath . '/wp-content/themes');
 
         // Check SQLite plugin exists and get it if required
-        File::ensureDirectoryExists(Storage::path('plugins'));
-
-        if (Storage::exists(Storage::path('plugins/sqlite-database-integration.zip'))) {
+        File::ensureDirectoryExists(Storage::path('/plugins'));
+        if (Storage::exists('/plugins/sqlite-database-integration.zip')) {
             $this->info("Using existing SQLite plugin");
         } else {
             $this->info("Fetching SQLite plugin");
