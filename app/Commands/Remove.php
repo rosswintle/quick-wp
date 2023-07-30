@@ -15,6 +15,8 @@ class Remove extends Command
     /**
      * The signature of the command.
      *
+     * If this changes be sure to update the delete command too.
+     *
      * @var string
      */
     protected $signature = 'remove {name? : The name of the site to remove}';

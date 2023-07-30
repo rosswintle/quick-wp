@@ -23,6 +23,8 @@ class Add extends Command
     /**
      * The signature of the command.
      *
+     * If you update this, remember to update the create command too.
+     *
      * @var string
      */
     protected $signature = 'add {name}
