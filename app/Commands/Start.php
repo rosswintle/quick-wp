@@ -6,6 +6,9 @@ use App\Services\SiteIndex;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
+
 class Start extends Command
 {
     /**
@@ -38,9 +41,10 @@ class Start extends Command
                 return;
             }
 
-            $name = $this->choice(
-                'Which site do you want to start?',
-                $sites->map(fn ($site) => $site->name)->toArray()
+            $name = select(
+                label: 'Which site do you want to start?',
+                options: $sites->map(fn ($site) => $site->name)->toArray(),
+                scroll: 10
             );
             if ($name) {
                 $siteName = $name;
