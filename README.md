@@ -33,8 +33,9 @@ If you have used the `qwp config` command to set a default path, the site will b
 If you specify a path with the `--path` option, the site will be created in that path (not as a subdirectory!)
 
 This latest version of WordPress is installed by default. You can specify a version with the
-`--wp-version` option. You can get the latest nightly build by specifying 'nightly'. Betas
-and RCs can be obtained by passing the relevant version number, e.g. '6.2-RC4'.
+`--wp-version` option. You can get the latest nightly build by specifying `nightly`. Betas
+and RCs can be obtained by passing the relevant version number, e.g. `6.2-RC4` or you can get the latest beta or
+release candidate using `beta` or `rc`.
 
 Sites are created on https://localhost:8001. Only run one site at a time.
 
@@ -42,10 +43,10 @@ Admin login is admin/admin.
 
 Press `Ctrl-C` to stop the site.
 
-*Note*: Quick WP symlinks in WordPress core files, so core is shared. Do not edit core files! (You
+*Note*: Quick WP symlinks to WordPress core files, so core is shared. Do not edit core files! (You
 wouldn't anyway, right?). The wp-content directory is not shared, so you can edit themes and plugins.
 
-### php qwp start {<sitename>}
+### `php qwp start {<sitename>}``
 
 Starts an existing Quick WP site.
 
@@ -65,10 +66,8 @@ This lists the installed Quick WP sites along with their directories and version
 
 ### `php qwp config {--default-path=<path>}`
 
-
-
 ## Problems?
 
 If you have problems, delete the `.quick-wp` directory in your `$HOME` directory and try again.
 
-Doing this may break existing sites (as WordPress core files for each site is symlinked to shared installs in `.quick-wp`)
+Doing this may break existing sites (as WordPress core files for each site is symlinked to shared installs in `.quick-wp`).
