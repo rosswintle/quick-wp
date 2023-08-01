@@ -39,9 +39,16 @@ class Add extends Command
     protected $description = 'Creates a site';
 
     /**
-     * The version to install/use.
+     * The version requested to install/use.
+     *
+     * Can be a version number, "latest", "nightly", "beta" or "rc"
      */
-    protected string $version;
+    protected string $requestedVersion;
+
+    /**
+     * The actual version number to install/use.
+     */
+    protected string $actualVersion;
 
     /**
      * The path to install to - will default to a subdirectory of the current
@@ -86,7 +93,7 @@ class Add extends Command
             '/xmlrpc.php',
         ];
 
-        $coreFilesPath = app(WpCoreVersion::class)->getPath($this->version);
+        $coreFilesPath = app(WpCoreVersion::class)->getPath($this->requestedVersion, $this->actualVersion);
 
         $pathsToLink = array_map(
             fn ($file) => $coreFilesPath . $file,
@@ -120,7 +127,7 @@ class Add extends Command
     {
         $this->validateArguments();
 
-        $this->version = $this->getVersionOption();
+        $this->requestedVersion = $this->getVersionOption();
 
         $this->installPath = $this->getInstallPathOption();
 
@@ -143,6 +150,9 @@ class Add extends Command
 
         // Make the directory
         File::ensureDirectoryExists($this->installPath);
+
+        // Get the actual version number
+        $this->actualVersion = app(WpCoreVersion::class)->calculateActualVersionNumber($this->requestedVersion);
 
         // Link the core files to the sites directory
         $this->linkCoreFiles();
@@ -199,7 +209,7 @@ class Add extends Command
 
         // copy in a theme?
         // TODO: Make this a method of the CoreVersion service
-        $themeDirs = File::directories($this->getStoragePathForDirectory('wordpress/' . $this->version . '/wp-content/themes'));
+        $themeDirs = File::directories($this->getStoragePathForDirectory('wordpress/' . $this->actualVersion . '/wp-content/themes'));
         $this->info('Copying default themes');
         foreach ($themeDirs as $dir) {
             File::copyDirectory(
@@ -217,7 +227,8 @@ class Add extends Command
             $this->installPath . '/router.php'
         );
 
-        $index->add($this->argument('name'), $this->installPath, $this->version);
+        // TODO: Add actual version installed
+        $index->add($this->argument('name'), $this->installPath, $this->requestedVersion, $this->actualVersion);
 
         $this->info("Starting site on http://localhost:8001 - press Ctrl+C to stop - wp-admin login is admin/admin");
 

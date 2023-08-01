@@ -34,7 +34,7 @@ class SiteIndex
     protected function fromArray(array $sitesArray) : Collection
     {
         return $this->sites = collect($sitesArray)->map(function ($site) {
-            return new Site($site['name'], $site['path'], $site['version']);
+            return new Site($site['name'], $site['path'], $site['requestedVersion'], $site['actualVersion']);
         });
     }
 
@@ -70,14 +70,14 @@ class SiteIndex
     /**
      * Adds a site to the index
      */
-    public function add(string $name, string $path, string $version) : void
+    public function add(string $name, string $path, string $requestedVersion, string $actualVersion = null ) : void
     {
         if ($this->exists($name)) {
             $this->warn("Site already exists in index");
             return;
         }
 
-        $this->sites[] = new Site($name, $path, $version);
+        $this->sites[] = new Site($name, $path, $requestedVersion, $actualVersion);
 
         app(Settings::class)->set('sites', $this->sites);
     }
