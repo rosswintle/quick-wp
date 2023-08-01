@@ -29,6 +29,6 @@ class ListSites extends Command
     public function handle(SiteIndex $index)
     {
         $this->info("List of sites");
-        $this->table(['Name', 'Path', 'Version'], $index->allAsArray());
+        $this->table(['Name', 'Path', 'Requested Version', 'Actual Version'], $index->allAsArray());
     }
 }
