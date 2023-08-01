@@ -46,7 +46,7 @@ Press `Ctrl-C` to stop the site.
 *Note*: Quick WP symlinks to WordPress core files, so core is shared. Do not edit core files! (You
 wouldn't anyway, right?). The wp-content directory is not shared, so you can edit themes and plugins.
 
-### `php qwp start {<sitename>}``
+### `php qwp start {<sitename>}`
 
 Starts an existing Quick WP site.
 
