@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
+
 class Remove extends Command
 {
     use GetsInstallPath;
@@ -52,7 +55,7 @@ class Remove extends Command
                 return;
             }
 
-            $name = $this->choice(
+            $name = select(
                 'Which site do you want to remove?',
                 $sites->map(fn ($site) => $site->name)->toArray()
             );
@@ -69,7 +72,7 @@ class Remove extends Command
         $site = $index->get($siteName);
 
         $this->warn("This will delete the directory $site->path");
-        if (! $this->confirm("Are you sure you want to delete site '" . $site->name, false)) {
+        if (! confirm("Are you sure you want to delete site '" . $site->name, false)) {
             $this->info("OK. I won't delete the site.");
             return;
         }
