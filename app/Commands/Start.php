@@ -32,6 +32,12 @@ class Start extends Command
         // Provide a selectable list if the name is not provided
         if (! $this->argument('name')) {
             $sites = $index->all();
+
+            if ($sites->isEmpty()) {
+                $this->error("No sites available");
+                return;
+            }
+
             $name = $this->choice(
                 'Which site do you want to start?',
                 $sites->map(fn ($site) => $site->name)->toArray()
