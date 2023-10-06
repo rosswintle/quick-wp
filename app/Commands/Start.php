@@ -69,9 +69,9 @@ class Start extends Command
             return;
         }
 
-        $this->info("Starting site on http://localhost:8001 - press Ctrl+C to stop");
+        $this->info("Starting site on http://$site->hostname:$site->port - press Ctrl+C to stop");
 
         // Note that this is not Laravel 10 yet so we don't have the Process Facade and are using the Symfony Process component directly
-        Process::fromShellCommandline("php -S localhost:8001 $site->path/router.php", $site->path, timeout: null)->run();
+        Process::fromShellCommandline("php -S $site->hostname:$site->port $site->path/router.php", $site->path, timeout: null)->run();
     }
 }

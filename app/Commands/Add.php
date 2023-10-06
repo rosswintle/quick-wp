@@ -5,6 +5,7 @@ namespace App\Commands;
 use App\Services\WpCli;
 use App\Services\Settings;
 use App\Services\SiteIndex;
+use App\Site;
 use Illuminate\Support\Str;
 use App\Services\WpCoreVersion;
 use App\Traits\GetsInstallPath;
@@ -29,7 +30,9 @@ class Add extends Command
      */
     protected $signature = 'add {name}
     {--wp-version=latest : Version can be a verison number, "latest" or "nightly"}
-    {--path= : A path to install to. Defaults to a subdirectory of the current directory or the configured default path. }';
+    {--path= : A path to install to. Defaults to a subdirectory of the current directory or the configured default path. }
+    {--hostname=' . Site::DEFAULT_HOSTNAME . ' : The hostname to use}
+    {--port=' . Site::DEFAULT_PORT . ' : The port to use}';
 
     /**
      * The description of the command.
@@ -57,12 +60,32 @@ class Add extends Command
     protected string $installPath;
 
     /**
+     * The hostname to run the site on
+     */
+    protected string $hostname = Site::DEFAULT_HOSTNAME;
+
+    /**
+     * The port to run the site on
+     */
+    protected int $port = Site::DEFAULT_PORT;
+
+    /**
      * Validates arguments (the mandatory/positional options) *before* processing them
      */
     public function validateArguments(): void
     {
         if (! $this->validateAlphaDash('name', $this->argument('name'), true)) {
             $this->error('Site name can only contain letters, numbers and dashes');
+            die();
+        }
+
+        if (! $this->validateRegex('hostname', $this->option('hostname'), ['/^[a-zA-Z0-9\.\-_]*$/'])) {
+            $this->error('Hostname can only contain letters, numbers, dots, underscored and dashes');
+            die();
+        }
+
+        if (! $this->validateInteger('port', $this->option('port'))) {
+            $this->error('Port must be a number');
             die();
         }
     }
@@ -78,6 +101,22 @@ class Add extends Command
     public function getVersionOption() : string
     {
         return $this->option('wp-version');
+    }
+
+    /**
+     * Get the hostname option
+     */
+    public function getHostnameOption() : string
+    {
+        return $this->option('hostname');
+    }
+
+    /**
+     * Get the port option
+     */
+    public function getPortOption() : string
+    {
+        return $this->option('port');
     }
 
     /**
@@ -128,8 +167,9 @@ class Add extends Command
         $this->validateArguments();
 
         $this->requestedVersion = $this->getVersionOption();
-
         $this->installPath = $this->getInstallPathOption();
+        $this->hostname = $this->getHostnameOption();
+        $this->port = $this->getPortOption();
 
         $this->info('Installing to ' . $this->installPath);
 
@@ -219,7 +259,8 @@ class Add extends Command
         }
 
         // Could add --locale
-        app(WpCli::class)->run('core install --url=http://localhost:8001 --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
+        $this->info('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
+        app(WpCli::class)->run('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
 
         // copy the router.php in
         File::copy(
@@ -228,11 +269,19 @@ class Add extends Command
         );
 
         // TODO: Add actual version installed
-        $index->add($this->argument('name'), $this->installPath, $this->requestedVersion, $this->actualVersion);
+        $index->add(
+            $this->argument('name'),
+            $this->installPath,
+            $this->requestedVersion,
+            $this->actualVersion,
+            $this->hostname,
+            $this->port,
+        );
 
-        $this->info("Starting site on http://localhost:8001 - press Ctrl+C to stop - wp-admin login is admin/admin");
+        $this->info("Starting site on http://{$this->hostname}:{$this->port} - press Ctrl+C to stop - wp-admin login is admin/admin");
 
         // Note that this is not Laravel 10 yet so we don't have the Process Facade and are using the Symfony Process component directly
-        Process::fromShellCommandline("php -S localhost:8001 $this->installPath/router.php", $this->installPath, timeout: null)->run();
+        // TODO: Error check on startup
+        Process::fromShellCommandline("php -S \"$this->hostname:$this->port\" $this->installPath/router.php", $this->installPath, timeout: null)->run();
     }
 }
