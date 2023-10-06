@@ -76,7 +76,7 @@ class Remove extends Command
         $site = $index->get($siteName);
 
         $this->warn("This will delete the directory $site->path");
-        if (! confirm("Are you sure you want to delete site '" . $site->name, false)) {
+        if (! confirm("Are you sure you want to delete site '$site->name'", false)) {
             $this->info("OK. I won't delete the site.");
             return;
         }
