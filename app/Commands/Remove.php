@@ -57,7 +57,10 @@ class Remove extends Command
 
             $name = select(
                 'Which site do you want to remove?',
-                $sites->map(fn ($site) => $site->name)->toArray()
+                $sites
+                    ->keyBy('name')
+                    ->map(fn ($site) => $site->name)
+                    ->toArray()
             );
             if ($name) {
                 $siteName = $name;
