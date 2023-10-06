@@ -43,7 +43,10 @@ class Start extends Command
 
             $name = select(
                 label: 'Which site do you want to start?',
-                options: $sites->map(fn ($site) => $site->name)->toArray(),
+                options: $sites
+                    ->keyBy('name')
+                    ->map(fn ($site) => $site->name)
+                    ->toArray(),
                 scroll: 10
             );
             if ($name) {
