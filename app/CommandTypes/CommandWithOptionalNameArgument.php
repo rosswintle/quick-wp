@@ -5,7 +5,7 @@ namespace App\CommandTypes;
 use App\Services\SiteIndex;
 use App\Site;
 use Illuminate\Console\Command;
-use function Laravel\Prompts\select;
+use function Laravel\Prompts\search;
 
 class CommandWithOptionalNameArgument extends Command
 {
@@ -30,13 +30,14 @@ class CommandWithOptionalNameArgument extends Command
                 exit;
             }
 
-            $name = select(
+            $name = search(
                 label: $label,
-                options: $sites
-                    ->keyBy('name')
-                    ->map(fn($site) => $site->name)
-                    ->toArray(),
-                scroll: 10
+                options: fn(string $value) =>
+                    $sites
+                        ->filter(fn($site) => str_starts_with($site->name, $value))
+                        ->keyBy('name')
+                        ->map(fn($site) => $site->name)
+                        ->toArray()
             );
             if ($name) {
                 $siteName = $name;
