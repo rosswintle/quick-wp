@@ -32,7 +32,8 @@ class Add extends Command
     {--wp-version=latest : Version can be a verison number, "latest" or "nightly"}
     {--path= : A path to install to. Defaults to a subdirectory of the current directory or the configured default path. }
     {--hostname=' . Site::DEFAULT_HOSTNAME . ' : The hostname to use}
-    {--port=' . Site::DEFAULT_PORT . ' : The port to use}';
+    {--port=' . Site::DEFAULT_PORT . ' : The port to use}
+    {--plugins= : Comma separated list of plugins to be installed}';
 
     /**
      * The description of the command.
@@ -157,6 +158,18 @@ class Add extends Command
         return Str::of(config('quickwp.userDirectory'))->finish('/') . $directory;
     }
 
+    protected function installPlugins()
+    {
+        if (is_null($this->options('plugins'))) {
+            return;
+        }
+
+        // TODO: Validate
+
+        $this->info('Installing plugins');
+        app(WpCli::class)->run('plugin install --activate ' . str_replace(',', ' ', $this->option('plugins')) . ' --path=' . $this->installPath);
+    }
+
     /**
      * Execute the console command.
      *
@@ -259,8 +272,9 @@ class Add extends Command
         }
 
         // Could add --locale
-        $this->info('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
         app(WpCli::class)->run('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
+
+        $this->installPlugins();
 
         // copy the router.php in
         File::copy(
