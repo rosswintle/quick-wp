@@ -2,15 +2,12 @@
 
 namespace App\Commands;
 
+use App\CommandTypes\CommandWithOptionalNameArgument;
 use App\Services\SiteIndex;
-use App\Traits\HasOptionalNameArgumentWithBackupSelection;
-use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
-class Start extends Command
+class Start extends CommandWithOptionalNameArgument
 {
-    use HasOptionalNameArgumentWithBackupSelection;
-
     /**
      * The signature of the command.
      *
@@ -28,7 +25,7 @@ class Start extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle(SiteIndex $index)
     {
