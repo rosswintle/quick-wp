@@ -2,14 +2,11 @@
 
 namespace App\Commands;
 
+use App\CommandTypes\CommandWithOptionalNameArgument;
 use App\Services\SiteIndex;
-use App\Traits\HasOptionalNameArgumentWithBackupSelection;
-use LaravelZero\Framework\Commands\Command;
 
-class Cd extends Command
+class Cd extends CommandWithOptionalNameArgument
 {
-    use HasOptionalNameArgumentWithBackupSelection;
-
     /**
      * The signature of the command.
      *
@@ -27,7 +24,7 @@ class Cd extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle(SiteIndex $index)
     {

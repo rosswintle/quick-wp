@@ -1,14 +1,13 @@
 <?php
-namespace App\Traits;
 
-use App\Services\Settings;
+namespace App\CommandTypes;
+
 use App\Services\SiteIndex;
 use App\Site;
-use Illuminate\Support\Str;
-
+use Illuminate\Console\Command;
 use function Laravel\Prompts\select;
 
-trait HasOptionalNameArgumentWithBackupSelection
+class CommandWithOptionalNameArgument extends Command
 {
     /**
      * Gets the 'name' argument. If there is none it prompts the user for one.
@@ -16,6 +15,7 @@ trait HasOptionalNameArgumentWithBackupSelection
      * Exits if there are no sites in the index.
      *
      * @param SiteIndex $index
+     * @param string $label
      * @return Site
      */
     public function getSiteFromNameArgument(SiteIndex $index, string $label) : Site

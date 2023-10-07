@@ -2,19 +2,16 @@
 
 namespace App\Commands;
 
+use App\CommandTypes\CommandWithOptionalNameArgument;
 use App\Services\SiteIndex;
 use App\Traits\GetsInstallPath;
-use App\Traits\HasOptionalNameArgumentWithBackupSelection;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use LaravelZero\Framework\Commands\Command;
 
 use function Laravel\Prompts\confirm;
 
-class Remove extends Command
+class Remove extends CommandWithOptionalNameArgument
 {
     use GetsInstallPath;
-    use HasOptionalNameArgumentWithBackupSelection;
 
     /**
      * The signature of the command.
@@ -41,7 +38,7 @@ class Remove extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle(SiteIndex $index)
     {
