@@ -3,14 +3,14 @@
 namespace App\Commands;
 
 use App\Services\SiteIndex;
+use App\Traits\HasOptionalNameArgumentWithBackupSelection;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\select;
-
 class Start extends Command
 {
+    use HasOptionalNameArgumentWithBackupSelection;
+
     /**
      * The signature of the command.
      *
@@ -33,34 +33,7 @@ class Start extends Command
     public function handle(SiteIndex $index)
     {
         // Provide a selectable list if the name is not provided
-        if (! $this->argument('name')) {
-            $sites = $index->all();
-
-            if ($sites->isEmpty()) {
-                $this->error("No sites available");
-                return;
-            }
-
-            $name = select(
-                label: 'Which site do you want to start?',
-                options: $sites
-                    ->keyBy('name')
-                    ->map(fn ($site) => $site->name)
-                    ->toArray(),
-                scroll: 10
-            );
-            if ($name) {
-                $siteName = $name;
-            }
-        }
-
-        // Check for an existing site in the index
-        if (! $index->exists($siteName)) {
-            $this->error("Site does not exist: " . $siteName);
-            return;
-        }
-
-        $site = $index->get($siteName);
+        $site = $this->getSiteFromNameArgument($index, 'Which site do you want to start?');
 
         // Check that the path exists
         if (! $site->pathExists()) {

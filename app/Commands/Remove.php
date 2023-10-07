@@ -4,16 +4,17 @@ namespace App\Commands;
 
 use App\Services\SiteIndex;
 use App\Traits\GetsInstallPath;
+use App\Traits\HasOptionalNameArgumentWithBackupSelection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\select;
 
 class Remove extends Command
 {
     use GetsInstallPath;
+    use HasOptionalNameArgumentWithBackupSelection;
 
     /**
      * The signature of the command.
@@ -44,36 +45,7 @@ class Remove extends Command
      */
     public function handle(SiteIndex $index)
     {
-        $siteName = $this->argument('name');
-
-        // Provide a selectable list if the name is not provided
-        if (! $this->argument('name')) {
-            $sites = $index->all();
-
-            if ($sites->isEmpty()) {
-                $this->error("No sites to remove");
-                return;
-            }
-
-            $name = select(
-                label: 'Which site do you want to remove?',
-                options: $sites
-                    ->keyBy('name')
-                    ->map(fn ($site) => $site->name)
-                    ->toArray(),
-                scroll: 10,
-            );
-            if ($name) {
-                $siteName = $name;
-            }
-        }
-
-        if (! $index->exists($siteName)) {
-            $this->error("Site does not exist: " . $siteName);
-            return;
-        }
-
-        $site = $index->get($siteName);
+        $site = $this->getSiteFromNameArgument($index, 'Which site do you want to remove?');
 
         $this->warn("This will delete the directory $site->path");
         if (! confirm("Are you sure you want to delete site '$site->name'", false)) {
