@@ -272,7 +272,6 @@ class Add extends Command
         }
 
         // Could add --locale
-        $this->info('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
         app(WpCli::class)->run('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
 
         $this->installPlugins();
