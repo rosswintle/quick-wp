@@ -160,7 +160,7 @@ class Add extends Command
 
     protected function installPlugins()
     {
-        if (is_null($this->options('plugins'))) {
+        if (is_null($this->option('plugins'))) {
             return;
         }
 
