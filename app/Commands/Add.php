@@ -180,7 +180,7 @@ class Add extends Command
         $this->validateArguments();
 
         $this->requestedVersion = $this->getVersionOption();
-        $this->installPath = $this->getInstallPathOption();
+        $this->installPath = getRealPath($this->getInstallPathOption());
         $this->hostname = $this->getHostnameOption();
         $this->port = $this->getPortOption();
 
