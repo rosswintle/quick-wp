@@ -160,7 +160,7 @@ class Add extends Command
 
     protected function installPlugins()
     {
-        if (is_null($this->options('plugins'))) {
+        if (is_null($this->option('plugins'))) {
             return;
         }
 
@@ -223,12 +223,24 @@ class Add extends Command
         // Check SQLite plugin exists and get it if required
         $pluginsPath = $this->getStoragePathForDirectory('plugins');
         File::ensureDirectoryExists($pluginsPath);
-        if (File::exists($pluginsPath . '/sqlite-database-integration.zip')) {
+        if (File::exists($pluginsPath . '/sqlite-database-integration')) {
             $this->info("Using existing SQLite plugin");
         } else {
             $this->info("Fetching SQLite plugin");
-            Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
+            $response = Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
+                ->accept('*/*')
+                ->withHeaders(
+                    [
+                        "User-Agent" => ""
+                    ]
+                )
                 ->get('https://downloads.wordpress.org/plugin/sqlite-database-integration.zip');
+
+            if (! $response->ok()) {
+                $this->error("Failed to download SQLite plugin");
+                die();
+            }
+
             // Unzip the plugin
             $this->info("Unzipping SQLite plugin");
             $zip = new \ZipArchive;
@@ -254,6 +266,8 @@ class Add extends Command
             ],
             $dbPhp
         );
+        file_put_contents($this->installPath . '/wp-content/db.php', $dbPhp);
+
         File::makeDirectory($this->installPath . '/wp-content/database');
         File::put(
             $this->installPath . '/wp-content/database/.ht.sqlite',
