@@ -227,7 +227,13 @@ class Add extends Command
             $this->info("Using existing SQLite plugin");
         } else {
             $this->info("Fetching SQLite plugin");
-            Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
+            $response = Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
+                ->accept('*/*')
+                ->withHeaders(
+                    [
+                        "User-Agent" => ""
+                    ]
+                )
                 ->get('https://downloads.wordpress.org/plugin/sqlite-database-integration.zip');
             // Unzip the plugin
             $this->info("Unzipping SQLite plugin");
