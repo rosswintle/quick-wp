@@ -223,7 +223,7 @@ class Add extends Command
         // Check SQLite plugin exists and get it if required
         $pluginsPath = $this->getStoragePathForDirectory('plugins');
         File::ensureDirectoryExists($pluginsPath);
-        if (File::exists($pluginsPath . '/sqlite-database-integration.zip')) {
+        if (File::exists($pluginsPath . '/sqlite-database-integration')) {
             $this->info("Using existing SQLite plugin");
         } else {
             $this->info("Fetching SQLite plugin");
@@ -235,6 +235,12 @@ class Add extends Command
                     ]
                 )
                 ->get('https://downloads.wordpress.org/plugin/sqlite-database-integration.zip');
+
+            if (! $response->ok()) {
+                $this->error("Failed to download SQLite plugin");
+                die();
+            }
+
             // Unzip the plugin
             $this->info("Unzipping SQLite plugin");
             $zip = new \ZipArchive;
