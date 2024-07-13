@@ -266,6 +266,8 @@ class Add extends Command
             ],
             $dbPhp
         );
+        file_put_contents($this->installPath . '/wp-content/db.php', $dbPhp);
+
         File::makeDirectory($this->installPath . '/wp-content/database');
         File::put(
             $this->installPath . '/wp-content/database/.ht.sqlite',
