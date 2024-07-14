@@ -14,8 +14,8 @@ class CommandWithOptionalNameArgument extends Command
      *
      * Exits if there are no sites in the index.
      *
-     * @param SiteIndex $index
-     * @param string $label
+     * @param  SiteIndex $index
+     * @param  string    $label
      * @return Site
      */
     public function getSiteFromNameArgument(SiteIndex $index, string $label) : Site
@@ -34,10 +34,11 @@ class CommandWithOptionalNameArgument extends Command
                 label: $label,
                 options: fn(string $value) =>
                     $sites
-                        ->filter(fn($site) => str_starts_with($site->name, $value))
-                        ->keyBy('name')
-                        ->map(fn($site) => $site->name)
-                        ->toArray()
+                    ->filter(fn($site) => str_starts_with($site->name, $value))
+                    ->keyBy('name')
+                    ->map(fn($site) => $site->name)
+                    ->toArray(),
+                scroll: 10,
             );
             if ($name) {
                 $siteName = $name;
