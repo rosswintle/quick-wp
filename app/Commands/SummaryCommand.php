@@ -9,7 +9,7 @@ class SummaryCommand extends \NunoMaduro\LaravelConsoleSummary\SummaryCommand
      */
     protected const FORMAT = 'txt';
 
-    public function configure()
+    protected function configure() : void
     {
         parent::configure();
 

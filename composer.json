@@ -1,39 +1,32 @@
 {
-    "name": "laravel-zero/laravel-zero",
-    "description": "The Laravel Zero Framework.",
+    "name": "rosswintle/quickwp",
+    "description": "The Quick CLI for making local WordPress sites.",
     "keywords": [
-        "framework",
-        "laravel",
-        "laravel zero",
+        "wordpress",
         "console",
         "cli"
     ],
-    "homepage": "https://laravel-zero.com",
+    "homepage": "https://qwp.forwp.dev",
     "type": "project",
     "license": "MIT",
-    "support": {
-        "issues": "https://github.com/laravel-zero/laravel-zero/issues",
-        "source": "https://github.com/laravel-zero/laravel-zero"
-    },
     "authors": [
         {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
+            "name": "Ross Wintle",
+            "email": "ross.wintle@gmail.com"
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.4",
-        "illuminate/http": "^10.0",
-        "illuminate/validation": "^10.0",
-        "laravel-zero/framework": "^10.0",
-        "nunomaduro/termwind": "^1.15",
+        "illuminate/http": "^11.0",
+        "illuminate/validation": "^11.0",
+        "laravel-zero/framework": "^11.0",
         "spatie/valuestore": "^1.3"
     },
     "require-dev": {
-        "laravel/pint": "^1.8",
-        "mockery/mockery": "^1.5.1",
-        "pestphp/pest": "^2.5"
+        "laravel/pint": "^1.15.2",
+        "mockery/mockery": "^1.6.11",
+        "pestphp/pest": "^2.34.7"
     },
     "autoload": {
         "files": [
