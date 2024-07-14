@@ -40,6 +40,8 @@ class Config extends Command
             return;
         }
 
+        $defaultPath = getRealPath($defaultPath);
+
         if (! File::exists($defaultPath)) {
             $create = $this->confirm("$defaultPath does not exist, do you want me to create it?", true);
             if ($create) {
