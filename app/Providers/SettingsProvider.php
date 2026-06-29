@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Services\Settings;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
 
 class SettingsProvider extends ServiceProvider
 {
@@ -29,7 +29,7 @@ class SettingsProvider extends ServiceProvider
         $this->app->singleton(
             Settings::class,
             function (Application $app) {
-                return new Settings();
+                return new Settings;
             }
         );
     }

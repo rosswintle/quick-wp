@@ -38,7 +38,7 @@ class Site
         $this->port = $port;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'name' => $this->name,
@@ -50,7 +50,7 @@ class Site
         ];
     }
 
-    public function pathExists() : bool
+    public function pathExists(): bool
     {
         return File::exists($this->path);
     }

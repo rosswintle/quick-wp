@@ -48,6 +48,7 @@ class Config extends Command
                 File::ensureDirectoryExists($defaultPath);
             } else {
                 $this->info("OK. I won't set the default path.");
+
                 return;
             }
         }

@@ -34,7 +34,8 @@ class Start extends CommandWithOptionalNameArgument
 
         // Check that the path exists
         if (! $site->pathExists()) {
-            $this->error("Site path does not exist: " . $site->path);
+            $this->error('Site path does not exist: '.$site->path);
+
             // TODO: Delete the site from the index
             return;
         }

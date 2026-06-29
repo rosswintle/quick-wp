@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'userDirectory' => (env('HOME') ?? env('USERPROFILE')) . '/.quick-wp',
+    'userDirectory' => (env('HOME') ?? env('USERPROFILE')).'/.quick-wp',
 ];

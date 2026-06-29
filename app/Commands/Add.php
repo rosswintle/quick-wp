@@ -2,23 +2,19 @@
 
 namespace App\Commands;
 
-use App\Services\WpCli;
-use App\Services\Settings;
 use App\Services\SiteIndex;
-use App\Site;
-use Illuminate\Support\Str;
+use App\Services\WpCli;
 use App\Services\WpCoreVersion;
+use App\Site;
 use App\Traits\GetsInstallPath;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Symfony\Component\Process\Process;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use LaravelZero\Framework\Commands\Command;
-use Illuminate\Validation\Concerns\ValidatesAttributes;
+use Symfony\Component\Process\Process;
 
 class Add extends Command
 {
-    use ValidatesAttributes;
     use GetsInstallPath;
 
     /**
@@ -31,8 +27,8 @@ class Add extends Command
     protected $signature = 'add {name}
     {--wp-version=latest : Version can be a verison number, "latest" or "nightly"}
     {--path= : A path to install to. Defaults to a subdirectory of the current directory or the configured default path. }
-    {--hostname=' . Site::DEFAULT_HOSTNAME . ' : The hostname to use}
-    {--port=' . Site::DEFAULT_PORT . ' : The port to use}
+    {--hostname='.Site::DEFAULT_HOSTNAME.' : The hostname to use}
+    {--port='.Site::DEFAULT_PORT.' : The port to use}
     {--plugins= : Comma separated list of plugins to be installed}';
 
     /**
@@ -77,21 +73,21 @@ class Add extends Command
     {
         if (! $this->validateAlphaDash('name', $this->argument('name'), true)) {
             $this->error('Site name can only contain letters, numbers and dashes');
-            die();
+            exit();
         }
 
         if (! $this->validateRegex('hostname', $this->option('hostname'), ['/^[a-zA-Z0-9\.\-_]*$/'])) {
             $this->error('Hostname can only contain letters, numbers, dots, underscored and dashes');
-            die();
+            exit();
         }
 
         if (! $this->validateInteger('port', $this->option('port'))) {
             $this->error('Port must be a number');
-            die();
+            exit();
         }
     }
 
-    public function validateOptions() : void
+    public function validateOptions(): void
     {
         // TODO: Validate options
     }
@@ -99,7 +95,7 @@ class Add extends Command
     /**
      * Get the version option - interprets 'latest' as the latest version.
      */
-    public function getVersionOption() : string
+    public function getVersionOption(): string
     {
         return $this->option('wp-version');
     }
@@ -107,7 +103,7 @@ class Add extends Command
     /**
      * Get the hostname option
      */
-    public function getHostnameOption() : string
+    public function getHostnameOption(): string
     {
         return $this->option('hostname');
     }
@@ -115,7 +111,7 @@ class Add extends Command
     /**
      * Get the port option
      */
-    public function getPortOption() : string
+    public function getPortOption(): string
     {
         return $this->option('port');
     }
@@ -136,12 +132,12 @@ class Add extends Command
         $coreFilesPath = app(WpCoreVersion::class)->getPath($this->requestedVersion, $this->actualVersion);
 
         $pathsToLink = array_map(
-            fn ($file) => $coreFilesPath . $file,
+            fn ($file) => $coreFilesPath.$file,
             $filesToLink
         );
 
         // TODO: Error handling
-        exec('ln -s ' . implode(' ', $pathsToLink) . ' ' . $this->installPath, $output, $resultCode);
+        exec('ln -s '.implode(' ', $pathsToLink).' '.$this->installPath, $output, $resultCode);
     }
 
     /**
@@ -150,12 +146,12 @@ class Add extends Command
     public function createWpConfigFile(): void
     {
         // TODO: Error handling
-        app(WpCli::class)->run('config create --dbname=localhost --dbuser=unused --skip-check --insecure --path=' . $this->installPath);
+        app(WpCli::class)->run('config create --dbname=localhost --dbuser=unused --skip-check --insecure --path='.$this->installPath);
     }
 
-    protected function getStoragePathForDirectory(string $directory) : string
+    protected function getStoragePathForDirectory(string $directory): string
     {
-        return Str::of(config('quickwp.userDirectory'))->finish('/') . $directory;
+        return Str::of(config('quickwp.userDirectory'))->finish('/').$directory;
     }
 
     protected function installPlugins()
@@ -167,7 +163,7 @@ class Add extends Command
         // TODO: Validate
 
         $this->info('Installing plugins');
-        app(WpCli::class)->run('plugin install --activate ' . str_replace(',', ' ', $this->option('plugins')) . ' --path=' . $this->installPath);
+        app(WpCli::class)->run('plugin install --activate '.str_replace(',', ' ', $this->option('plugins')).' --path='.$this->installPath);
     }
 
     /**
@@ -184,22 +180,24 @@ class Add extends Command
         $this->hostname = $this->getHostnameOption();
         $this->port = $this->getPortOption();
 
-        $this->info('Installing to ' . $this->installPath);
+        $this->info('Installing to '.$this->installPath);
 
         // CHECK NAME AND PATH DON'T ALREADY EXIST
         // Check for an existing directory
         if (File::isDirectory($this->installPath)) {
-            $this->error("Directory already exists: " . $this->installPath);
+            $this->error('Directory already exists: '.$this->installPath);
+
             return;
         }
 
         // Check for an existing site in the index
         if ($index->exists($this->argument('name'))) {
-            $this->error("Site already exists: " . $this->argument('name'));
+            $this->error('Site already exists: '.$this->argument('name'));
+
             return;
         }
 
-        $this->info("Adding site: " . $this->argument('name'));
+        $this->info('Adding site: '.$this->argument('name'));
 
         // Make the directory
         File::ensureDirectoryExists($this->installPath);
@@ -214,46 +212,46 @@ class Add extends Command
         $this->createWpConfigFile();
 
         // make wp-content directory
-        File::ensureDirectoryExists($this->installPath . '/wp-content');
+        File::ensureDirectoryExists($this->installPath.'/wp-content');
         // make wp-content/plugins
-        File::ensureDirectoryExists($this->installPath . '/wp-content/plugins');
+        File::ensureDirectoryExists($this->installPath.'/wp-content/plugins');
         // make wp-content/themes
-        File::ensureDirectoryExists($this->installPath . '/wp-content/themes');
+        File::ensureDirectoryExists($this->installPath.'/wp-content/themes');
 
         // Check SQLite plugin exists and get it if required
         $pluginsPath = $this->getStoragePathForDirectory('plugins');
         File::ensureDirectoryExists($pluginsPath);
-        if (File::exists($pluginsPath . '/sqlite-database-integration')) {
-            $this->info("Using existing SQLite plugin");
+        if (File::exists($pluginsPath.'/sqlite-database-integration')) {
+            $this->info('Using existing SQLite plugin');
         } else {
-            $this->info("Fetching SQLite plugin");
-            $response = Http::withOptions(['sink' => $pluginsPath . '/sqlite-database-integration.zip'])
+            $this->info('Fetching SQLite plugin');
+            $response = Http::withOptions(['sink' => $pluginsPath.'/sqlite-database-integration.zip'])
                 ->accept('*/*')
                 ->withHeaders(
                     [
-                        "User-Agent" => ""
+                        'User-Agent' => '',
                     ]
                 )
                 ->get('https://downloads.wordpress.org/plugin/sqlite-database-integration.zip');
 
             if (! $response->ok()) {
-                $this->error("Failed to download SQLite plugin");
-                die();
+                $this->error('Failed to download SQLite plugin');
+                exit();
             }
 
             // Unzip the plugin
-            $this->info("Unzipping SQLite plugin");
+            $this->info('Unzipping SQLite plugin');
             $zip = new \ZipArchive;
-            $zip->open($pluginsPath . '/sqlite-database-integration.zip');
+            $zip->open($pluginsPath.'/sqlite-database-integration.zip');
             $zip->extractTo($pluginsPath);
         }
 
-        File::copyDirectory($pluginsPath . '/sqlite-database-integration', $this->installPath . '/wp-content/plugins/sqlite-database-integration');
+        File::copyDirectory($pluginsPath.'/sqlite-database-integration', $this->installPath.'/wp-content/plugins/sqlite-database-integration');
 
-        File::copy($pluginsPath . '/sqlite-database-integration/db.copy', $this->installPath . '/wp-content/db.php');
+        File::copy($pluginsPath.'/sqlite-database-integration/db.copy', $this->installPath.'/wp-content/db.php');
 
         // from https://github.com/WordPress/sqlite-database-integration/issues/7#issuecomment-1563465590
-        $dbPhp = file_get_contents($this->installPath . '/wp-content/db.php');
+        $dbPhp = file_get_contents($this->installPath.'/wp-content/db.php');
         // Replace the placeholders with the correct values
         $dbPhp = str_replace(
             [
@@ -261,39 +259,39 @@ class Add extends Command
                 '{SQLITE_PLUGIN}',
             ],
             [
-                $this->installPath . '/wp-content/plugins/sqlite-database-integration',
+                $this->installPath.'/wp-content/plugins/sqlite-database-integration',
                 'sqlite-database-integration/load.php',
             ],
             $dbPhp
         );
-        file_put_contents($this->installPath . '/wp-content/db.php', $dbPhp);
+        file_put_contents($this->installPath.'/wp-content/db.php', $dbPhp);
 
-        File::makeDirectory($this->installPath . '/wp-content/database');
+        File::makeDirectory($this->installPath.'/wp-content/database');
         File::put(
-            $this->installPath . '/wp-content/database/.ht.sqlite',
+            $this->installPath.'/wp-content/database/.ht.sqlite',
             ''
         );
 
         // copy in a theme?
         // TODO: Make this a method of the CoreVersion service
-        $themeDirs = File::directories($this->getStoragePathForDirectory('wordpress/' . $this->actualVersion . '/wp-content/themes'));
+        $themeDirs = File::directories($this->getStoragePathForDirectory('wordpress/'.$this->actualVersion.'/wp-content/themes'));
         $this->info('Copying default themes');
         foreach ($themeDirs as $dir) {
             File::copyDirectory(
                 $dir,
-                $this->installPath . '/wp-content/themes/' . Str::afterLast($dir, '/')
+                $this->installPath.'/wp-content/themes/'.Str::afterLast($dir, '/')
             );
         }
 
         // Could add --locale
-        app(WpCli::class)->run('core install --url="http://' . $this->hostname . ':' . $this->port . '" --title="' . $this->argument('name') . '" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path=' . $this->installPath);
+        app(WpCli::class)->run('core install --url="http://'.$this->hostname.':'.$this->port.'" --title="'.$this->argument('name').'" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --path='.$this->installPath);
 
         $this->installPlugins();
 
         // copy the router.php in
         File::copy(
             app_path('router-template.php'),
-            $this->installPath . '/router.php'
+            $this->installPath.'/router.php'
         );
 
         // TODO: Add actual version installed

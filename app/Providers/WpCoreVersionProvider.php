@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Services\WpCoreVersion;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
 
 class WpCoreVersionProvider extends ServiceProvider
 {
@@ -28,7 +28,7 @@ class WpCoreVersionProvider extends ServiceProvider
         $this->app->bind(
             WpCoreVersion::class,
             function (Application $app) {
-                return new WpCoreVersion();
+                return new WpCoreVersion;
             }
         );
     }

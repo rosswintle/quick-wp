@@ -1,5 +1,9 @@
 <?php
 
+use App\Providers\SiteIndexProvider;
+use App\Providers\WpCliProvider;
+use App\Providers\WpCoreVersionProvider;
+
 return [
 
     /*
@@ -67,9 +71,9 @@ return [
     */
 
     'providers' => [
-        App\Providers\SiteIndexProvider::class,
-        App\Providers\WpCoreVersionProvider::class,
-        App\Providers\WpCliProvider::class,
+        SiteIndexProvider::class,
+        WpCoreVersionProvider::class,
+        WpCliProvider::class,
     ],
 
 ];

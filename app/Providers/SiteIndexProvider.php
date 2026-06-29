@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Providers;
 
 use App\Services\SiteIndex;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
 
 class SiteIndexProvider extends ServiceProvider
 {
@@ -27,7 +28,7 @@ class SiteIndexProvider extends ServiceProvider
         $this->app->singleton(
             SiteIndex::class,
             function (Application $app) {
-                return new SiteIndex();
+                return new SiteIndex;
             }
         );
     }

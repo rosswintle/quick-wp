@@ -47,10 +47,11 @@ class Remove extends CommandWithOptionalNameArgument
         $this->warn("This will delete the directory $site->path");
         if (! confirm("Are you sure you want to delete site '$site->name'", false)) {
             $this->info("OK. I won't delete the site.");
+
             return;
         }
 
-        $this->info("Removing site: " . $site->name);
+        $this->info('Removing site: '.$site->name);
 
         File::deleteDirectory($site->path);
 

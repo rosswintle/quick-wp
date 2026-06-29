@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use App\Site;
-use App\Services\Settings;
+use Illuminate\Console\Concerns\InteractsWithIO;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Console\Concerns\InteractsWithIO;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Laravel\Prompts\Output\ConsoleOutput;
 
 class SiteIndex
 {
@@ -22,16 +21,16 @@ class SiteIndex
     public function __construct()
     {
         // Set up the console output
-        $this->output = new ConsoleOutput();
+        $this->output = new ConsoleOutput;
     }
 
-    public function init() : void
+    public function init(): void
     {
         $settings = app(Settings::class);
         $this->sites = $this->fromArray($settings->get('sites', []));
     }
 
-    protected function fromArray(array $sitesArray) : Collection
+    protected function fromArray(array $sitesArray): Collection
     {
         return $this->sites = collect($sitesArray)->map(function ($site) {
             return new Site(
@@ -48,12 +47,12 @@ class SiteIndex
     /**
      * Returns an array of all the sites in the index.
      */
-    public function all() : Collection
+    public function all(): Collection
     {
         return $this->sites;
     }
 
-    public function allAsArray() : array
+    public function allAsArray(): array
     {
         return $this->sites->map(fn ($site) => $site->toArray())->toArray();
     }
@@ -61,7 +60,7 @@ class SiteIndex
     /**
      * Returns a site by name.
      */
-    public function get(string $name) : Site|null
+    public function get(string $name): ?Site
     {
         return $this->sites->firstWhere('name', $name);
     }
@@ -69,7 +68,7 @@ class SiteIndex
     /**
      * Check if a site exists in the index.
      */
-    public function exists(string $name) : bool
+    public function exists(string $name): bool
     {
         return ! empty($this->get($name));
     }
@@ -81,13 +80,13 @@ class SiteIndex
         string $name,
         string $path,
         string $requestedVersion,
-        string $actualVersion = null,
+        ?string $actualVersion = null,
         string $hostname = Site::DEFAULT_HOSTNAME,
         int $port = Site::DEFAULT_PORT,
-    ) : void
-    {
+    ): void {
         if ($this->exists($name)) {
-            $this->warn("Site already exists in index");
+            $this->warn('Site already exists in index');
+
             return;
         }
 
@@ -105,10 +104,11 @@ class SiteIndex
     /**
      * Removes a site from the index
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
         if (! $this->exists($name)) {
-            $this->warn("Site does not exist in index");
+            $this->warn('Site does not exist in index');
+
             return;
         }
 

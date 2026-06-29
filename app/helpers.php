@@ -8,12 +8,12 @@
  *
  * @return void
  */
-function getRealPath( string $path ) : string
+function getRealPath(string $path): string
 {
     exec("echo $path", $output, $resultCode);
 
     if ($resultCode !== 0) {
-        throw new \Exception("Failed to get expanded path for $path");
+        throw new Exception("Failed to get expanded path for $path");
     }
 
     return $output[0];

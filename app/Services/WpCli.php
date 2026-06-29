@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Collection;
+use Illuminate\Console\Concerns\InteractsWithIO;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Console\Concerns\InteractsWithIO;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class WpCli
@@ -21,10 +20,10 @@ class WpCli
      */
     public function __construct()
     {
-        $this->output = new ConsoleOutput();
+        $this->output = new ConsoleOutput;
     }
 
-    public function init()
+    public function init(): void
     {
         if (! $this->isInstalled()) {
             $this->install();
@@ -33,33 +32,29 @@ class WpCli
 
     /**
      * Check if WP-CLI is installed.
-     *
-     * @return bool
      */
-    public function isInstalled() : bool
+    public function isInstalled(): bool
     {
-        return File::exists(config('quickwp.userDirectory') . '/wp-cli.phar');
+        return File::exists(config('quickwp.userDirectory').'/wp-cli.phar');
     }
 
     /**
      * Install WP-CLI.
-     *
-     * @return void
      */
-    public function install() : void
+    public function install(): void
     {
         $this->info('Installing WP-CLI');
-        Http::withOptions(['sink' => config('quickwp.userDirectory') . '/wp-cli.phar'])
+        Http::withOptions(['sink' => config('quickwp.userDirectory').'/wp-cli.phar'])
             ->get('https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar');
     }
 
     /**
      * Run a WP-CLI command.
      */
-    public function run(string $command) : void
+    public function run(string $command): void
     {
         $this->info("Running WP-CLI command: {$command}");
-        exec('php ' . config('quickwp.userDirectory') . '/wp-cli.phar' .  " " . $command, $output, $resultCode);
+        exec('php '.config('quickwp.userDirectory').'/wp-cli.phar'.' '.$command, $output, $resultCode);
         echo implode("\n", $output);
         echo "\n";
     }

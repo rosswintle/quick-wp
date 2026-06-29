@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Services\WpCli;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
 
 class WpCliProvider extends ServiceProvider
 {
@@ -28,7 +28,7 @@ class WpCliProvider extends ServiceProvider
         $this->app->bind(
             WpCli::class,
             function (Application $app) {
-                return new WpCli();
+                return new WpCli;
             }
         );
     }
