@@ -2,9 +2,9 @@
 
 namespace App\Commands;
 
+use App\Actions\StartSite;
 use App\CommandTypes\CommandWithOptionalNameArgument;
 use App\Services\SiteIndex;
-use Symfony\Component\Process\Process;
 
 class Start extends CommandWithOptionalNameArgument
 {
@@ -40,9 +40,6 @@ class Start extends CommandWithOptionalNameArgument
             return;
         }
 
-        $this->info("Starting site on http://$site->hostname:$site->port - press Ctrl+C to stop");
-
-        // Note that this is not Laravel 10 yet so we don't have the Process Facade and are using the Symfony Process component directly
-        Process::fromShellCommandline("php -S $site->hostname:$site->port $site->path/router.php", $site->path, timeout: null)->run();
+        (new StartSite)->handle($site);
     }
 }

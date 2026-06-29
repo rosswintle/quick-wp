@@ -7,15 +7,19 @@ use App\Services\WpCli;
 use App\Services\WpCoreVersion;
 use App\Site;
 use App\Traits\GetsInstallPath;
+use App\Traits\InstallsRouterScript;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Concerns\ValidatesAttributes;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Process\Process;
 
 class Add extends Command
 {
     use GetsInstallPath;
+    use InstallsRouterScript;
+    use ValidatesAttributes;
 
     /**
      * The signature of the command.
@@ -288,11 +292,7 @@ class Add extends Command
 
         $this->installPlugins();
 
-        // copy the router.php in
-        File::copy(
-            app_path('router-template.php'),
-            $this->installPath.'/router.php'
-        );
+        $installRouterResult = $this->installRouterScript($this->installPath);
 
         // TODO: Add actual version installed
         $index->add(
