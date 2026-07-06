@@ -43,10 +43,8 @@ trait InstallsSQLitePlugin
         return '0.0.0';
     }
 
-    public function maybeUpdateStoredSQLitePlugin(): bool
+    public function getSQLitePluginUpdateVersion(): string
     {
-        $currentVersion = $this->getStoredSQLitePluginVersion();
-
         $response = Http::withHeaders(
                 [
                     'User-Agent' => '',
@@ -55,8 +53,15 @@ trait InstallsSQLitePlugin
             ->acceptJson()
             ->get('https://api.wordpress.org/plugins/info/1.0/' . self::PLUGIN_SLUG . '.json');
 
-        $updateVersion = $response->json('version', '0.0.0');
         // TODO: Maybe cache this for a day?
+        return $response->json('version', '0.0.0');
+    }
+
+    public function maybeUpdateStoredSQLitePlugin(): bool
+    {
+        $currentVersion = $this->getStoredSQLitePluginVersion();
+
+        $updateVersion = $this->getSQLitePluginUpdateVersion();
 
         if (Comparator::lessThanOrEqualTo($updateVersion, $currentVersion)) {
             return false;
@@ -110,8 +115,7 @@ trait InstallsSQLitePlugin
             $this->fetchSQLitePlugin();
         }
 
-        // OLD CODE
-        // Check SQLite plugin exists and get it if required
+        // Copy to the site
         File::copyDirectory(
             $this->sqlitePluginStorageDirectory(),
             Str::finish($this->installPath, '/') . 'wp-content/plugins/sqlite-database-integration');
